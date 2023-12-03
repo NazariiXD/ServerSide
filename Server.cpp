@@ -7,6 +7,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include "utilityFunctions.h"
 
 #define TEMPERATURE -3
 
@@ -21,6 +22,10 @@
 using namespace std;
 
 const int PORT = 12345;
+HANDLE mutex;
+string sharesRate;      // êóðñ ïîòî÷íèé äëÿ ê³ëüêîõ âàëþò
+string exchangeRate;    // àêö³¿ òåæ ïîòî÷í³ äëÿ ê³ëüêîõ êîìïàí³é
+string weatherForecast; // çðîáèòè, íàïðèêëàä, ùîá áóâ íà íàñòóïí³ 6 ãîäèí
 
 
 void writeToFile(const string& fileName, const string& data) {
@@ -39,7 +44,7 @@ string randomWeatherForecast() {
     const int RANDOM_INTERVAL = 3;
 
     double temperature = TEMPERATURE + getRandomValue(RANDOM_INTERVAL);
-    string str = " Temperature:  : " + to_string(temperature) + " °C";
+    string str = " Temperature:  : " + to_string(temperature) + " Â°C";
 
     writeToFile("Weather.txt", str);
 
@@ -88,6 +93,20 @@ DWORD WINAPI sendExchangeRate(PVOID pvParam) {
 
 int main() {
 
+    mutex = CreateMutex(NULL, FALSE, NULL);
+    if (mutex == NULL) {
+        cerr << "Failed to create mutex" << endl;
+    }
+    if (CreateThread(NULL, NULL, updateWeatherForecast, NULL, NULL, NULL) == NULL) {
+        cerr << "Failed to launch data generator" << endl;
+    }
+    if (CreateThread(NULL, NULL, updateExchangeRate, NULL, NULL, NULL) == NULL) {
+        cerr << "Failed to launch data generator" << endl;
+    }
+    if (CreateThread(NULL, NULL, updateSharesRate, NULL, NULL, NULL) == NULL) {
+        cerr << "Failed to launch data generator" << endl;
+    }
+    cout << "Database connected\n";
 	// Sockets library initialisation
     WSADATA wsaData;
     if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
