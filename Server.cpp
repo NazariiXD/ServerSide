@@ -3,13 +3,31 @@
 #include <ws2tcpip.h>
 #pragma comment(lib, "ws2_32.lib")
 #include <Windows.h>
-
+#include "utilityFunctions.h"
 using namespace std;
 
 const int PORT = 12345;
+HANDLE mutex;
+string sharesRate;      // курс поточний для кількох валют
+string exchangeRate;    // акції теж поточні для кількох компаній
+string weatherForecast; // зробити, наприклад, щоб був на наступні 6 годин
 
 int main() {
 
+    mutex = CreateMutex(NULL, FALSE, NULL);
+    if (mutex == NULL) {
+        cerr << "Failed to create mutex" << endl;
+    }
+    if (CreateThread(NULL, NULL, updateWeatherForecast, NULL, NULL, NULL) == NULL) {
+        cerr << "Failed to launch data generator" << endl;
+    }
+    if (CreateThread(NULL, NULL, updateExchangeRate, NULL, NULL, NULL) == NULL) {
+        cerr << "Failed to launch data generator" << endl;
+    }
+    if (CreateThread(NULL, NULL, updateSharesRate, NULL, NULL, NULL) == NULL) {
+        cerr << "Failed to launch data generator" << endl;
+    }
+    cout << "Database connected\n";
 	// Sockets library initialisation
     WSADATA wsaData;
     if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
