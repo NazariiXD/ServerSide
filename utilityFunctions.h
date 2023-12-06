@@ -4,7 +4,9 @@
 #include <string>
 #include <fstream>
 #include <sstream>
-using namespace std;
+#include <bitset>
+#include <vector>
+#include <time.h>
 
 #define TEMPERATURE -3
 
@@ -16,14 +18,19 @@ using namespace std;
 #define EXCHANGE_EURO_RATE 40.5
 #define EXCHANGE_ZLOTY_RATE 9.3
 
-DWORD WINAPI processClientRequests(LPVOID);
+struct clientData {
+	SOCKET socket;
+	short int subscription;
+};
+
+DWORD WINAPI manageClientSubscription(LPVOID);
 DWORD WINAPI updateWeatherForecast(LPVOID);
 DWORD WINAPI updateExchangeRate(LPVOID);
 DWORD WINAPI updateSharesRate(LPVOID);
 
-void writeToFile(const string& fileName, const string& data);
+void writeToFile(const std::string& fileName, const std::string& data);
 double getRandomValue(int randomInterval);
 
-string randomWeatherForecast();
-string randomSharePrice();
-string randomExchangeRate();
+std::string randomWeatherForecast();
+std::string randomSharePrice();
+std::string randomExchangeRate();

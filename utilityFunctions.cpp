@@ -1,13 +1,13 @@
 #include "utilityFunctions.h"
 
 extern HANDLE mutex;
-extern string sharesRate;
-extern string exchangeRate;
-extern string weatherForecast;
+extern std::string sharesRate;
+extern std::string exchangeRate;
+extern std::string weatherForecast;
+extern std::vector<clientData> clients;
 
-
-void writeToFile(const string& fileName, const string& data) {
-    ofstream file(fileName, ios_base::app);
+void writeToFile(const std::string& fileName, const std::string& data) {
+    std::ofstream file(fileName, std::ios_base::app);
     if (file.is_open()) {
         file << __TIME__ + '\n' + data + '\n';
         file.close();
@@ -18,59 +18,85 @@ double getRandomValue(int randomInterval) {
     return sign * (static_cast<double>(rand() % randomInterval) + static_cast<double>(rand() % 100) / 100);
 }
 
-string randomWeatherForecast() {
+std::string randomWeatherForecast() {
     const int RANDOM_INTERVAL = 3;
     double temperature = TEMPERATURE + getRandomValue(RANDOM_INTERVAL);
-    string str = " Temperature:  : " + to_string(temperature) + " °C";
+    std::string str = " Temperature:  : " + std::to_string(temperature) + " °C";
     writeToFile("Weather.txt", str);
     return str;
 }
-string randomSharePrice() {
+std::string randomSharePrice() {
     const int RANDOM_INTERVAL = 50;
     double microsoftShare = STOCK_PRICE_MICROSOFT + getRandomValue(RANDOM_INTERVAL);
     double googleShare = STOCK_PRICE_GOOGLE + getRandomValue(RANDOM_INTERVAL);
     double appleShare = STOCK_PRICE_APPLE + getRandomValue(RANDOM_INTERVAL);
-    string str = " Shares Microsoft:  : " + to_string(microsoftShare) +
-        "\n Shares Google:  : " + to_string(googleShare) +
-        "\n Shares Apple:  : " + to_string(appleShare);
+    std::string str = " Shares Microsoft:  : " + std::to_string(microsoftShare) +
+        "\n Shares Google:  : " + std::to_string(googleShare) +
+        "\n Shares Apple:  : " + std::to_string(appleShare);
 
     writeToFile("Shares.txt", str);
     return str;
 }
-string randomExchangeRate() {
+std::string randomExchangeRate() {
     const int RANDOM_INTERVAL = 2;
     double dollarRate = EXCHANGE_DOLLAR_RATE + getRandomValue(RANDOM_INTERVAL);
     double euroRate = EXCHANGE_EURO_RATE + getRandomValue(RANDOM_INTERVAL);
     double zlotyRate = EXCHANGE_ZLOTY_RATE + getRandomValue(RANDOM_INTERVAL / 2);
-    string str = " Dollar rate : " + to_string(dollarRate) +
-        "\n Euro rate : " + to_string(euroRate) +
-        "\n Zloty rate : " + to_string(zlotyRate);
+    std::string str = " Dollar rate : " + std::to_string(dollarRate) +
+        "\n Euro rate : " + std::to_string(euroRate) +
+        "\n Zloty rate : " + std::to_string(zlotyRate);
     writeToFile("Rate.txt", str);
     return str;
 }
 
-DWORD WINAPI processClientRequests(LPVOID param) {
+DWORD WINAPI manageClientSubscription(LPVOID param) {
     SOCKET clientSocket = *((SOCKET*)(param)); //why use reinterpret_cast?
-
     while (true) {
-        char buffer[1024];
-        memset(buffer, 0, sizeof(buffer));
+        short int subscriptionMask = 0;
 
         // Get data from client
-        if (recv(clientSocket, buffer, sizeof(buffer), 0) == SOCKET_ERROR) {
-            cerr << "Receive failed (Lost connection to client)" << endl;
+        if (recv(clientSocket, (char *)&subscriptionMask, sizeof(short int), 0) == SOCKET_ERROR) {
+            std::cerr << "Receive failed (Lost connection to client)\n";
+            WaitForSingleObject(mutex, INFINITE);
+            for (int i = 0; i < clients.size(); i++) { // Delete socket from list if disconnected
+                if (clientSocket == clients[i].socket) {
+                    clients.erase(clients.begin() + i);
+                }
+            }
+            ReleaseMutex(mutex);
             closesocket(clientSocket);
-            continue;
+            return 1;
         }
-
-        cout << " " << __TIME__ << " Received message from client: " << buffer << std::endl;
-
+        std::cout << " " << __TIME__ << " Received message from client: " << std::bitset<3>(subscriptionMask) << std::endl;
+        clientData client;
+        client.socket = clientSocket;
+        client.subscription = subscriptionMask;
+        int present = 0;
+        WaitForSingleObject(mutex, INFINITE);
+        if (subscriptionMask == 0) {
+            for (int i = 0; i < clients.size(); i++) { // Delete socket from list if unsubscribed
+                if (clientSocket == clients[i].socket) {
+                    clients.erase(clients.begin() + i);
+                }
+            }
+        }
+        else {
+            for (int i = 0; i < clients.size(); i++) {   // Add/update subscription
+                if (clientSocket == clients[i].socket) {
+                    clients[i].subscription = client.subscription;
+                    present = 1;
+                }
+            }
+            if (present == 0) {
+                clients.push_back(client);
+            }
+        }
+        ReleaseMutex(mutex);
         //Sending a response to the client
-        const char* response = "Server received your message.";
+        const char* response = "Server received your subscription data.";
         send(clientSocket, response, strlen(response), 0);
     }
     closesocket(clientSocket);
-
     return 0;
 }
 
