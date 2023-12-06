@@ -5,8 +5,8 @@ std::string sharesRate;
 std::string exchangeRate;
 std::string weatherForecast;
 
-std::vector<double> sharesPriceVal = { STOCK_PRICE_MICROSOFT, STOCK_PRICE_GOOGLE, STOCK_PRICE_APPLE };
-std::vector<double> exchangeRateVal = { EXCHANGE_DOLLAR_RATE, EXCHANGE_EURO_RATE, EXCHANGE_ZLOTY_RATE };
+double sharesPriceVal[3] = {STOCK_PRICE_MICROSOFT, STOCK_PRICE_GOOGLE, STOCK_PRICE_APPLE};
+double exchangeRateVal[3] = {EXCHANGE_DOLLAR_RATE, EXCHANGE_EURO_RATE, EXCHANGE_ZLOTY_RATE};
 double temperature = TEMPERATURE;
 
 std::vector<clientData> clients;
@@ -26,8 +26,16 @@ double getRandomValue(int randomInterval) {
 
 std::string randomWeatherForecast() {
     const int RANDOM_INTERVAL = 3;
-
-    temperature += getRandomValue(RANDOM_INTERVAL);
+    double randomValue = getRandomValue(RANDOM_INTERVAL);
+    if (temperature + randomValue > 40.0) {
+        temperature -= 1.0;
+    }
+    else if (temperature + randomValue < -35.0) {
+        temperature += 1.0;
+    }
+    else {
+        temperature += randomValue;
+    }
     std::string str = " Temperature : " + std::to_string(temperature) + " °C";
 
     writeToFile("Weather.txt", str);
@@ -35,8 +43,17 @@ std::string randomWeatherForecast() {
 }
 std::string randomSharePrice() {
     const int RANDOM_INTERVAL = 3;
-    for (int i = 0; i < sharesPriceVal.size(); i++) {
-        sharesPriceVal[i] += getRandomValue(RANDOM_INTERVAL);
+    for (int i = 0; i < sizeof(sharesPriceVal)/sizeof(sharesPriceVal[0]); i++) {
+        double randomValue = getRandomValue(RANDOM_INTERVAL);
+        if (sharesPriceVal[i] + randomValue > 380.0) {
+            sharesPriceVal[i] -= 1.0;
+        }
+        else if (sharesPriceVal[i] + randomValue < 0.00000001) {
+            sharesPriceVal[i] += 100.0;
+        }
+        else {
+            sharesPriceVal[i] += getRandomValue(RANDOM_INTERVAL);
+        }
     }
     std::string str = " Shares Microsoft : " + std::to_string(sharesPriceVal[0]) +
         "\n Shares Google : " + std::to_string(sharesPriceVal[1]) +
@@ -47,8 +64,17 @@ std::string randomSharePrice() {
 }
 std::string randomExchangeRate() {
     const int RANDOM_INTERVAL = 2;
-    for (int i = 0; i < exchangeRateVal.size(); i++) {
-        exchangeRateVal[i] += getRandomValue(RANDOM_INTERVAL);
+    for (int i = 0; i < sizeof(exchangeRateVal)/sizeof(exchangeRateVal[0]); i++) {
+        double randomValue = getRandomValue(RANDOM_INTERVAL);
+        if (exchangeRateVal[i] + randomValue > 50.0) {
+            exchangeRateVal[i] -= 1.0;
+        }
+        else if (exchangeRateVal[i] + randomValue < 0.00000001) {
+            exchangeRateVal[i] += 7.0;
+        }
+        else {
+            exchangeRateVal[i] += getRandomValue(RANDOM_INTERVAL);
+        }
     }
     std::string str = " Dollar rate : " + std::to_string(exchangeRateVal[0]) +
         "\n Euro rate : " + std::to_string(exchangeRateVal[1]) +
@@ -59,8 +85,8 @@ std::string randomExchangeRate() {
 }
 
 DWORD WINAPI manageClientSubscription(LPVOID param) {
-    SOCKET clientSocket = *((SOCKET*)(param)); //why use reinterpret_cast?
-    while (true) {
+    SOCKET clientSocket = *((SOCKET*)(param)); // Comment in memory of interpret_cast
+    while (1) {
         short int subscriptionMask = 0;
 
         // Get data from client
@@ -119,9 +145,10 @@ DWORD WINAPI sendWeatherForecast(LPVOID param) {
         WaitForSingleObject(mutex, INFINITE);
         weatherForecast = randomWeatherForecast();
         for (int i = 0; i < clients.size(); i++) {
-            if (send(clients[i].socket, weatherForecast.c_str(), strlen(weatherForecast.c_str()), 0) == SOCKET_ERROR) {
-                std::cerr << "Error sending weather forecast to client " << i << ". Error code: " << WSAGetLastError() << "\n";
-                continue;
+            if ((clients[i].subscription & 0b100) == 0b100) {
+                if (send(clients[i].socket, weatherForecast.c_str(), strlen(weatherForecast.c_str()), 0) == SOCKET_ERROR) {
+                    std::cerr << "Error sending weather forecast to client " << i << ". Error code: " << WSAGetLastError() << "\n";
+                }
             }
         }
         ReleaseMutex(mutex);
@@ -135,9 +162,11 @@ DWORD WINAPI sendExchangeRate(LPVOID param) {
         WaitForSingleObject(mutex, INFINITE);
         exchangeRate = randomExchangeRate();
         for (int i = 0; i < clients.size(); i++) {
-            if (send(clients[i].socket, exchangeRate.c_str(), strlen(exchangeRate.c_str()), 0) == SOCKET_ERROR) {
-                std::cerr << "Error sending exchange rate to client " << i << ". Error code: " << WSAGetLastError() << "\n";
-                continue;
+            if ((clients[i].subscription & 0b010) == 0b010) {
+                if (send(clients[i].socket, exchangeRate.c_str(), strlen(exchangeRate.c_str()), 0) == SOCKET_ERROR) {
+                    std::cerr << "Error sending exchange rate to client " << i << ". Error code: " << WSAGetLastError() << "\n";
+                    continue;
+                }
             }
         }
         ReleaseMutex(mutex);
@@ -151,10 +180,11 @@ DWORD WINAPI sendSharePrice(LPVOID param) {
         WaitForSingleObject(mutex, INFINITE);
         sharesRate = randomSharePrice();
         for (int i = 0; i < clients.size(); i++) {
-            
-            if (send(clients[i].socket, sharesRate.c_str(), strlen(sharesRate.c_str()), 0) == SOCKET_ERROR) {
-                std::cerr << "Error sending shares rate to client " << i << ". Error code: " << WSAGetLastError() << "\n";
-                continue;
+            if ((clients[i].subscription & 0b001) == 0b001) {
+                if (send(clients[i].socket, sharesRate.c_str(), strlen(sharesRate.c_str()), 0) == SOCKET_ERROR) {
+                    std::cerr << "Error sending shares rate to client " << i << ". Error code: " << WSAGetLastError() << "\n";
+                    continue;
+                }
             }
         }
         ReleaseMutex(mutex);

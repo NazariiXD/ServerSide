@@ -71,7 +71,7 @@ int main() {
     sockaddr_in clientAddress{};
     //size of client address
     int client_addr_size = sizeof(clientAddress);
-    while (true) {
+    while (1) {
         clientSocket = accept(serverSocket, (struct sockaddr*)&clientAddress, &client_addr_size);
         if (clientSocket == INVALID_SOCKET) {
             std::cerr << "Accept failed\n";
