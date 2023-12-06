@@ -66,3 +66,79 @@
  Shares Microsoft : 376.750000
  Shares Google : 134.310000
  Shares Apple : 189.820000
+22:15:09
+ Shares Microsoft : 372.170000
+ Shares Google : 134.100000
+ Shares Apple : 191.860000
+22:15:09
+ Shares Microsoft : 374.620000
+ Shares Google : 133.490000
+ Shares Apple : 190.440000
+22:15:09
+ Shares Microsoft : 373.710000
+ Shares Google : 136.020000
+ Shares Apple : 191.650000
+22:15:09
+ Shares Microsoft : 376.660000
+ Shares Google : 135.310000
+ Shares Apple : 191.770000
+22:17:15
+ Shares Microsoft : 372.170000
+ Shares Google : 134.100000
+ Shares Apple : 191.860000
+22:17:15
+ Shares Microsoft : 374.620000
+ Shares Google : 133.490000
+ Shares Apple : 190.440000
+22:17:15
+ Shares Microsoft : 373.710000
+ Shares Google : 136.020000
+ Shares Apple : 191.650000
+22:17:15
+ Shares Microsoft : 376.660000
+ Shares Google : 135.310000
+ Shares Apple : 191.770000
+22:17:15
+ Shares Microsoft : 375.310000
+ Shares Google : 137.420000
+ Shares Apple : 192.500000
+22:17:15
+ Shares Microsoft : 375.420000
+ Shares Google : 135.950000
+ Shares Apple : 194.070000
+22:17:15
+ Shares Microsoft : 374.190000
+ Shares Google : 134.170000
+ Shares Apple : 196.970000
+22:17:15
+ Shares Microsoft : 374.250000
+ Shares Google : 136.810000
+ Shares Apple : 199.020000
+22:17:15
+ Shares Microsoft : 374.950000
+ Shares Google : 136.820000
+ Shares Apple : 196.730000
+22:17:15
+ Shares Microsoft : 374.410000
+ Shares Google : 139.480000
+ Shares Apple : 198.810000
+22:17:15
+ Shares Microsoft : 374.670000
+ Shares Google : 137.100000
+ Shares Apple : 199.100000
+22:17:15
+ Shares Microsoft : 374.520000
+ Shares Google : 137.060000
+ Shares Apple : 199.160000
+22:17:15
+ Shares Microsoft : 374.310000
+ Shares Google : 134.340000
+ Shares Apple : 199.930000
+22:17:15
+ Shares Microsoft : 374.190000
+ Shares Google : 134.950000
+ Shares Apple : 202.600000
+22:17:15
+ Shares Microsoft : 372.880000
+ Shares Google : 137.450000
+ Shares Apple : 200.940000

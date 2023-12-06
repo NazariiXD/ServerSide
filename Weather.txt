@@ -4,3 +4,9 @@
  Temperature : -2.480000 °C
 20:48:08
  Temperature : -5.340000 °C
+22:15:09
+ Temperature : -5.340000 °C
+22:17:15
+ Temperature : -5.340000 °C
+22:17:15
+ Temperature : -3.100000 °C

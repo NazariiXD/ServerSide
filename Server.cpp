@@ -4,6 +4,7 @@
 #include "utilityFunctions.h"
 
 const int PORT = 12345;
+const char* SERVER_IP = "127.0.0.1";
 HANDLE mutex;
 
 int main() {
@@ -15,26 +16,27 @@ int main() {
     }
     sockaddr_in serverAddress{};
     // Use inet_pton to convert an IP address from a string representation
-    if (inet_pton(AF_INET, "127.0.0.1", &(serverAddress.sin_addr)) != 1) {
+    if (inet_pton(AF_INET, SERVER_IP, &(serverAddress.sin_addr)) != 1) {
         std::cerr << "Invalid IP address\n";
         WSACleanup();
         return -1;
     }
     serverAddress.sin_port = htons(PORT);
     serverAddress.sin_family = AF_INET;
+
     // Creating server socket
     // AF_INET - internet socket
     // SOCK_STREAM - stream socket (with creating a connection)
     // NULL - default TCP protocol
     SOCKET serverSocket = socket(AF_INET, SOCK_STREAM, NULL);
     if (serverSocket == INVALID_SOCKET) {
-        std::cerr << "Error creating socket\n";
+        std::cerr << "Error creating socket. Error code : " << WSAGetLastError() << "\n";
         WSACleanup();
         return -1;
     }
     // Binding for accepting connections
     if (bind(serverSocket, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) == SOCKET_ERROR) {
-        std::cerr << "Bind failed\n";
+        std::cerr << "Bind failed. Error code : " << WSAGetLastError() << "\n";
         closesocket(serverSocket);
         WSACleanup();
         return -1;
@@ -63,7 +65,7 @@ int main() {
         return -1;
     }
 
-    std::cout << "Server listening on port: " << PORT << "\n";
+    std::cout << "Server listening on port: " << PORT << "...\n";
 
     // Creating client socket
     SOCKET clientSocket;
@@ -72,15 +74,17 @@ int main() {
     //size of client address
     int client_addr_size = sizeof(clientAddress);
     while (1) {
+
         clientSocket = accept(serverSocket, (struct sockaddr*)&clientAddress, &client_addr_size);
         if (clientSocket == INVALID_SOCKET) {
-            std::cerr << "Accept failed\n";
-            closesocket(serverSocket);
+            std::cerr << "Accept failed. Error code : " << WSAGetLastError() << "\n";
+            /*closesocket(serverSocket);
             WSACleanup();
-            return -1;
+            return -1;*/
+            continue;
         }
 
-        std::cout << " " << __TIME__ << "Client connected\n";
+        std::cout << " " << __TIME__ << " Client connected\n";
 
         //Processing of client requests
         CreateThread(NULL, 0, manageClientSubscription, &clientSocket, 0, NULL);

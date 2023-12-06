@@ -45,15 +45,8 @@ std::string randomSharePrice() {
     const int RANDOM_INTERVAL = 3;
     for (int i = 0; i < sizeof(sharesPriceVal)/sizeof(sharesPriceVal[0]); i++) {
         double randomValue = getRandomValue(RANDOM_INTERVAL);
-        if (sharesPriceVal[i] + randomValue > 380.0) {
-            sharesPriceVal[i] -= 1.0;
-        }
-        else if (sharesPriceVal[i] + randomValue < 0.00000001) {
-            sharesPriceVal[i] += 100.0;
-        }
-        else {
-            sharesPriceVal[i] += getRandomValue(RANDOM_INTERVAL);
-        }
+
+        sharesPriceVal[i] = (sharesPriceVal[i] + randomValue > 0) ? (sharesPriceVal[i] + randomValue) : 0;
     }
     std::string str = " Shares Microsoft : " + std::to_string(sharesPriceVal[0]) +
         "\n Shares Google : " + std::to_string(sharesPriceVal[1]) +
@@ -64,17 +57,11 @@ std::string randomSharePrice() {
 }
 std::string randomExchangeRate() {
     const int RANDOM_INTERVAL = 2;
+
     for (int i = 0; i < sizeof(exchangeRateVal)/sizeof(exchangeRateVal[0]); i++) {
         double randomValue = getRandomValue(RANDOM_INTERVAL);
-        if (exchangeRateVal[i] + randomValue > 50.0) {
-            exchangeRateVal[i] -= 1.0;
-        }
-        else if (exchangeRateVal[i] + randomValue < 0.00000001) {
-            exchangeRateVal[i] += 7.0;
-        }
-        else {
-            exchangeRateVal[i] += getRandomValue(RANDOM_INTERVAL);
-        }
+
+        exchangeRateVal[i] = (exchangeRateVal[i] + randomValue > 0) ? (exchangeRateVal[i] + randomValue) : 0;
     }
     std::string str = " Dollar rate : " + std::to_string(exchangeRateVal[0]) +
         "\n Euro rate : " + std::to_string(exchangeRateVal[1]) +
@@ -86,34 +73,36 @@ std::string randomExchangeRate() {
 
 DWORD WINAPI manageClientSubscription(LPVOID param) {
     SOCKET clientSocket = *((SOCKET*)(param)); // Comment in memory of interpret_cast
+
     while (1) {
         short int subscriptionMask = 0;
 
         // Get data from client
         if (recv(clientSocket, (char *)&subscriptionMask, sizeof(short int), 0) == SOCKET_ERROR) {
-            std::cerr << " Receive failed (Lost connection to client)\n";
+            std::cerr << " Receive failed (Lost connection to client). Error code: " << WSAGetLastError() << "\n";
             WaitForSingleObject(mutex, INFINITE);
             for (int i = 0; i < clients.size(); i++) { // Delete socket from list if disconnected
                 if (clientSocket == clients[i].socket) {
                     clients.erase(clients.begin() + i);
-                    std::cout << " " << __TIME__ << " Deleted disconnected client from subscription list\n";
+                    std::cout << " " << __TIME__ << " Deleted disconnected client" + std::to_string(i) + " from subscription list\n";
                 }
             }
             ReleaseMutex(mutex);
             closesocket(clientSocket);
             return -1;
         }
-        std::cout << " " << __TIME__ << " Received message from client: " << std::bitset<3>(subscriptionMask) << "\n";
-        clientData client;
+        std::cout << " " << __TIME__ << " Received message from client : " << std::bitset<3>(subscriptionMask) << "\n";
+        clientData client{};
         client.socket = clientSocket;
         client.subscription = subscriptionMask;
         int present = 0;
+
         WaitForSingleObject(mutex, INFINITE);
         if (subscriptionMask == 0) {
             for (int i = 0; i < clients.size(); i++) { // Delete socket from list if unsubscribed
                 if (clientSocket == clients[i].socket) {
                     clients.erase(clients.begin() + i);
-                    std::cout << " " << __TIME__ << " Deleted unsubscribed client from list\n";
+                    std::cout << " " << __TIME__ << " Deleted unsubscribed client" + std::to_string(i) + " from list\n";
                 }
             }
         }
@@ -122,7 +111,7 @@ DWORD WINAPI manageClientSubscription(LPVOID param) {
                 if (clientSocket == clients[i].socket) {
                     clients[i].subscription = client.subscription;
                     present = 1;
-                    std::cout << " " << __TIME__ << " Updated client subscription to " << std::bitset<3>(subscriptionMask) << "\n";
+                    std::cout << " " << __TIME__ << " Updated client" + std::to_string(i) + " subscription to " << std::bitset<3>(subscriptionMask) << "\n";
                     break;
                 }
             }

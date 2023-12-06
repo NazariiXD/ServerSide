@@ -8,15 +8,15 @@
 #include <vector>
 #include <time.h>
 
-#define TEMPERATURE -3
+#define TEMPERATURE 0
 
 #define STOCK_PRICE_MICROSOFT 374.51
 #define STOCK_PRICE_GOOGLE 131.86
 #define STOCK_PRICE_APPLE 191.24
 
-#define EXCHANGE_DOLLAR_RATE 38.3
+#define EXCHANGE_DOLLAR_RATE 37.45
 #define EXCHANGE_EURO_RATE 40.5
-#define EXCHANGE_ZLOTY_RATE 9.3
+#define EXCHANGE_ZLOTY_RATE 9.35
 
 struct clientData {
 	SOCKET socket;
