@@ -22,7 +22,10 @@ struct clientData {
 	SOCKET socket;
 	short int subscription;
 };
-
+struct mailingData {
+	short int type;
+	std::string message;
+};
 DWORD WINAPI manageClientSubscription(LPVOID);
 DWORD WINAPI sendWeatherForecast(LPVOID);
 DWORD WINAPI sendExchangeRate(LPVOID);

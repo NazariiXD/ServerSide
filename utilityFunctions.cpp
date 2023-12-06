@@ -144,9 +144,12 @@ DWORD WINAPI sendWeatherForecast(LPVOID param) {
     while (1) {
         WaitForSingleObject(mutex, INFINITE);
         weatherForecast = randomWeatherForecast();
+        mailingData packet;
+        packet.type = 0b100;
+        packet.message = weatherForecast;
         for (int i = 0; i < clients.size(); i++) {
             if ((clients[i].subscription & 0b100) == 0b100) {
-                if (send(clients[i].socket, weatherForecast.c_str(), strlen(weatherForecast.c_str()), 0) == SOCKET_ERROR) {
+                if (send(clients[i].socket, (char *)&packet, sizeof(mailingData), 0) == SOCKET_ERROR) {
                     std::cerr << "Error sending weather forecast to client " << i << ". Error code: " << WSAGetLastError() << "\n";
                 }
             }
@@ -161,9 +164,12 @@ DWORD WINAPI sendExchangeRate(LPVOID param) {
     while (1) {
         WaitForSingleObject(mutex, INFINITE);
         exchangeRate = randomExchangeRate();
+        mailingData packet;
+        packet.type = 0b010;
+        packet.message = exchangeRate;
         for (int i = 0; i < clients.size(); i++) {
             if ((clients[i].subscription & 0b010) == 0b010) {
-                if (send(clients[i].socket, exchangeRate.c_str(), strlen(exchangeRate.c_str()), 0) == SOCKET_ERROR) {
+                if (send(clients[i].socket, (char *)&packet, sizeof(mailingData), 0) == SOCKET_ERROR) {
                     std::cerr << "Error sending exchange rate to client " << i << ". Error code: " << WSAGetLastError() << "\n";
                     continue;
                 }
@@ -179,9 +185,12 @@ DWORD WINAPI sendSharePrice(LPVOID param) {
     while (1) {
         WaitForSingleObject(mutex, INFINITE);
         sharesRate = randomSharePrice();
+        mailingData packet;
+        packet.type = 0b001;
+        packet.message = sharesRate;
         for (int i = 0; i < clients.size(); i++) {
             if ((clients[i].subscription & 0b001) == 0b001) {
-                if (send(clients[i].socket, sharesRate.c_str(), strlen(sharesRate.c_str()), 0) == SOCKET_ERROR) {
+                if (send(clients[i].socket, (char*)&packet, sizeof(mailingData), 0) == SOCKET_ERROR) {
                     std::cerr << "Error sending shares rate to client " << i << ". Error code: " << WSAGetLastError() << "\n";
                     continue;
                 }
