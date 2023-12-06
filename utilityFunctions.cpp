@@ -29,7 +29,7 @@ string randomWeatherForecast() {
     return str;
 }
 string randomSharePrice() {
-    const int RANDOM_INTERVAL = 3;
+    const int RANDOM_INTERVAL = 50;
 
     double microsoftShare = STOCK_PRICE_MICROSOFT + getRandomValue(RANDOM_INTERVAL);
     double googleShare = STOCK_PRICE_GOOGLE + getRandomValue(RANDOM_INTERVAL);
@@ -44,7 +44,7 @@ string randomSharePrice() {
     return str;
 }
 string randomExchangeRate() {
-    const int RANDOM_INTERVAL = 5;
+    const int RANDOM_INTERVAL = 2;
 
     double dollarRate = EXCHANGE_DOLLAR_RATE + getRandomValue(RANDOM_INTERVAL);
     double euroRate = EXCHANGE_EURO_RATE + getRandomValue(RANDOM_INTERVAL);
@@ -60,7 +60,7 @@ string randomExchangeRate() {
 }
 
 DWORD WINAPI processClientRequests(LPVOID param) {
-    SOCKET clientSocket = *reinterpret_cast<SOCKET*>(param);
+    SOCKET clientSocket = *((SOCKET*)(param)); //why use reinterpret_cast?
 
     while (true) {
         char buffer[1024];
@@ -68,7 +68,7 @@ DWORD WINAPI processClientRequests(LPVOID param) {
 
         // Get data from client
         if (recv(clientSocket, buffer, sizeof(buffer), 0) == SOCKET_ERROR) {
-            cerr << "Receive failed" << endl;
+            cerr << "Receive failed (Lost connection to client)" << endl;
             closesocket(clientSocket);
             continue;
         }
@@ -88,7 +88,7 @@ DWORD WINAPI processClientRequests(LPVOID param) {
 DWORD WINAPI updateWeatherForecast(LPVOID param) {
     while (1) {
         WaitForSingleObject(mutex, INFINITE);
-        //weatherForecast = generateWeatherForecast(); //������������� �����
+        //weatherForecast = generateWeatherForecast();
         ReleaseMutex(mutex);
         Sleep(7000);
     }
@@ -97,7 +97,7 @@ DWORD WINAPI updateWeatherForecast(LPVOID param) {
 DWORD WINAPI updateExchangeRate(LPVOID param) {
     while (1) {
         WaitForSingleObject(mutex, INFINITE);
-        //exchangeRate = generateExchangeRate(); //������������� �����
+        //exchangeRate = generateExchangeRate();
         ReleaseMutex(mutex);
         Sleep(6000);
     }
@@ -106,9 +106,9 @@ DWORD WINAPI updateExchangeRate(LPVOID param) {
 DWORD WINAPI updateSharesRate(LPVOID param) {
     while (1) {
         WaitForSingleObject(mutex, INFINITE);
-        //sharesRate = generateSharesRate(); //������������� �����
+        //sharesRate = generateSharesRate();
         ReleaseMutex(mutex);
-        Sleep(5000); //��� ��� ���� ������ ����. ��������� ���� ���� n ��.
+        Sleep(5000);
     }
     return 0;
 }
