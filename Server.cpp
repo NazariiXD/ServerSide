@@ -91,8 +91,12 @@ int main() {
             WSACleanup();
             return -1;
         }
+        char ipAddress[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &(clientAddress.sin_addr), ipAddress, INET_ADDRSTRLEN);
+
 
         cout << " " << __TIME__ << "Client connected\n";
+
 
         //Processing of client requests
         CreateThread(NULL, 0, processClientRequests, &clientSocket, 0, NULL);
