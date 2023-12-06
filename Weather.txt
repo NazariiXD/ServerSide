@@ -1,0 +1,33 @@
+15:54:00
+ Temperature:  : -5.340000 °C
+
+15:54:00
+ Temperature:  : -0.760000 °C
+
+15:54:00
+ Temperature:  : -2.380000 °C
+
+15:54:00
+ Temperature:  : -0.550000 °C
+
+15:54:00
+ Temperature:  : -3.610000 °C
+
+15:54:00
+ Temperature:  : -4.420000 °C
+
+15:54:00
+ Temperature:  : -3.910000 °C
+
+15:54:00
+ Temperature:  : -0.470000 °C
+
+15:54:00
+ Temperature:  : -1.790000 °C
+
+15:54:00
+ Temperature:  : -0.050000 °C
+
+15:54:00
+ Temperature:  : -3.710000 °C
+

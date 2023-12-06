@@ -1,10 +1,10 @@
 #include "utilityFunctions.h"
 
 extern HANDLE mutex;
-extern std::string sharesRate;
-extern std::string exchangeRate;
-extern std::string weatherForecast;
-extern std::vector<clientData> clients;
+std::string sharesRate;
+std::string exchangeRate;
+std::string weatherForecast;
+std::vector<clientData> clients;
 
 void writeToFile(const std::string& fileName, const std::string& data) {
     std::ofstream file(fileName, std::ios_base::app);
@@ -22,7 +22,8 @@ std::string randomWeatherForecast() {
     const int RANDOM_INTERVAL = 3;
     double temperature = TEMPERATURE + getRandomValue(RANDOM_INTERVAL);
     std::string str = " Temperature:  : " + std::to_string(temperature) + " °C";
-    writeToFile("Weather.txt", str);
+    writeToFile("Weather.txt", __TIME__);
+    writeToFile("Weather.txt", str + "\n");
     return str;
 }
 std::string randomSharePrice() {
@@ -34,7 +35,8 @@ std::string randomSharePrice() {
         "\n Shares Google:  : " + std::to_string(googleShare) +
         "\n Shares Apple:  : " + std::to_string(appleShare);
 
-    writeToFile("Shares.txt", str);
+    writeToFile("Shares.txt", __TIME__);
+    writeToFile("Shares.txt", str + "\n");
     return str;
 }
 std::string randomExchangeRate() {
@@ -45,7 +47,8 @@ std::string randomExchangeRate() {
     std::string str = " Dollar rate : " + std::to_string(dollarRate) +
         "\n Euro rate : " + std::to_string(euroRate) +
         "\n Zloty rate : " + std::to_string(zlotyRate);
-    writeToFile("Rate.txt", str);
+    writeToFile("Rate.txt", __TIME__);
+    writeToFile("Rate.txt", str + "\n");
     return str;
 }
 
@@ -56,18 +59,19 @@ DWORD WINAPI manageClientSubscription(LPVOID param) {
 
         // Get data from client
         if (recv(clientSocket, (char *)&subscriptionMask, sizeof(short int), 0) == SOCKET_ERROR) {
-            std::cerr << "Receive failed (Lost connection to client)\n";
+            std::cerr << " Receive failed (Lost connection to client)\n";
             WaitForSingleObject(mutex, INFINITE);
             for (int i = 0; i < clients.size(); i++) { // Delete socket from list if disconnected
                 if (clientSocket == clients[i].socket) {
                     clients.erase(clients.begin() + i);
+                    std::cout << " " << __TIME__ << " Deleted disconnected client from subscription list\n";
                 }
             }
             ReleaseMutex(mutex);
             closesocket(clientSocket);
             return 1;
         }
-        std::cout << " " << __TIME__ << " Received message from client: " << std::bitset<3>(subscriptionMask) << std::endl;
+        std::cout << " " << __TIME__ << " Received message from client: " << std::bitset<3>(subscriptionMask) << "\n";
         clientData client;
         client.socket = clientSocket;
         client.subscription = subscriptionMask;
@@ -77,6 +81,7 @@ DWORD WINAPI manageClientSubscription(LPVOID param) {
             for (int i = 0; i < clients.size(); i++) { // Delete socket from list if unsubscribed
                 if (clientSocket == clients[i].socket) {
                     clients.erase(clients.begin() + i);
+                    std::cout << " " << __TIME__ << " Deleted unsubscribed client from list\n";
                 }
             }
         }
@@ -85,10 +90,13 @@ DWORD WINAPI manageClientSubscription(LPVOID param) {
                 if (clientSocket == clients[i].socket) {
                     clients[i].subscription = client.subscription;
                     present = 1;
+                    std::cout << " " << __TIME__ << " Updated client subscription to " << std::bitset<3>(subscriptionMask) << "\n";
+                    break;
                 }
             }
             if (present == 0) {
                 clients.push_back(client);
+                std::cout << " " << __TIME__ << " Added client with" << std::bitset<3>(subscriptionMask) << " subscription mask\n";
             }
         }
         ReleaseMutex(mutex);
@@ -100,30 +108,42 @@ DWORD WINAPI manageClientSubscription(LPVOID param) {
     return 0;
 }
 
-DWORD WINAPI updateWeatherForecast(LPVOID param) {
+DWORD WINAPI sendWeatherForecast(LPVOID param) {
     while (1) {
         WaitForSingleObject(mutex, INFINITE);
-        //weatherForecast = generateWeatherForecast();
+        weatherForecast = randomWeatherForecast();
+        for (int i = 0; i < clients.size(); i++) {
+            send(clients[i].socket, weatherForecast.c_str(), strlen(weatherForecast.c_str()), 0);
+            // TODO: handle failed send
+        }
         ReleaseMutex(mutex);
-        Sleep(7000);
+        Sleep(1000);
     }
     return 0;
 }
-DWORD WINAPI updateExchangeRate(LPVOID param) {
+DWORD WINAPI sendExchangeRate(LPVOID param) {
     while (1) {
         WaitForSingleObject(mutex, INFINITE);
-        //exchangeRate = generateExchangeRate();
+        exchangeRate = randomExchangeRate();
+        for (int i = 0; i < clients.size(); i++) {
+            send(clients[i].socket, exchangeRate.c_str(), strlen(exchangeRate.c_str()), 0);
+            // TODO: handle failed send
+        }
         ReleaseMutex(mutex);
-        Sleep(6000);
+        Sleep(2500);
     }
     return 0;
 }
-DWORD WINAPI updateSharesRate(LPVOID param) {
+DWORD WINAPI sendSharePrice(LPVOID param) {
     while (1) {
         WaitForSingleObject(mutex, INFINITE);
-        //sharesRate = generateSharesRate();
+        sharesRate = randomSharePrice();
+        for (int i = 0; i < clients.size(); i++) {
+            send(clients[i].socket, sharesRate.c_str(), strlen(sharesRate.c_str()), 0);
+            // TODO: handle failed send
+        }
         ReleaseMutex(mutex);
-        Sleep(5000);
+        Sleep(7500);
     }
     return 0;
 }

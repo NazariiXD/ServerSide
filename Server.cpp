@@ -5,7 +5,6 @@
 
 const int PORT = 12345;
 HANDLE mutex;
-std::vector<clientData> clients;
 
 int main() {
 	// Sockets library initialisation
@@ -45,14 +44,14 @@ int main() {
     if (mutex == NULL) {
         std::cerr << "Failed to create mutex\n";
     }
-    if (CreateThread(NULL, NULL, updateWeatherForecast, NULL, NULL, NULL) == NULL) {
-        std::cerr << "Failed to launch data generator\n";
+    if (CreateThread(NULL, NULL, sendWeatherForecast, NULL, NULL, NULL) == NULL) {
+        std::cerr << "Failed to launch forecast subscription service\n";
     }
-    if (CreateThread(NULL, NULL, updateExchangeRate, NULL, NULL, NULL) == NULL) {
-        std::cerr << "Failed to launch data generator\n";
+    if (CreateThread(NULL, NULL, sendExchangeRate, NULL, NULL, NULL) == NULL) {
+        std::cerr << "Failed to launch exchange rate subscription service\n";
     }
-    if (CreateThread(NULL, NULL, updateSharesRate, NULL, NULL, NULL) == NULL) {
-        std::cerr << "Failed to launch data generator\n";
+    if (CreateThread(NULL, NULL, sendSharePrice, NULL, NULL, NULL) == NULL) {
+        std::cerr << "Failed to launch shares rate subscription service\n";
     }
     std::cout << "Database connected\n";
 

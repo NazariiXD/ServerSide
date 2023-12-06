@@ -24,13 +24,13 @@ struct clientData {
 };
 
 DWORD WINAPI manageClientSubscription(LPVOID);
-DWORD WINAPI updateWeatherForecast(LPVOID);
-DWORD WINAPI updateExchangeRate(LPVOID);
-DWORD WINAPI updateSharesRate(LPVOID);
+DWORD WINAPI sendWeatherForecast(LPVOID);
+DWORD WINAPI sendExchangeRate(LPVOID);
+DWORD WINAPI sendSharePrice(LPVOID);
 
 void writeToFile(const std::string& fileName, const std::string& data);
 double getRandomValue(int randomInterval);
 
 std::string randomWeatherForecast();
-std::string randomSharePrice();
 std::string randomExchangeRate();
+std::string randomSharePrice();

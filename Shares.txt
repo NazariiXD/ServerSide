@@ -1,0 +1,10 @@
+15:54:00
+ Shares Microsoft:  : 357.170000
+ Shares Google:  : 151.100000
+ Shares Apple:  : 199.860000
+
+15:54:00
+ Shares Microsoft:  : 379.960000
+ Shares Google:  : 104.250000
+ Shares Apple:  : 145.820000
+

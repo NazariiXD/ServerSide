@@ -1,0 +1,25 @@
+15:54:00
+ Dollar rate : 36.960000
+ Euro rate : 41.740000
+ Zloty rate : 9.920000
+
+15:54:00
+ Dollar rate : 39.750000
+ Euro rate : 38.890000
+ Zloty rate : 8.880000
+
+15:54:00
+ Dollar rate : 37.390000
+ Euro rate : 41.030000
+ Zloty rate : 9.510000
+
+15:54:00
+ Dollar rate : 39.250000
+ Euro rate : 39.790000
+ Zloty rate : 9.420000
+
+15:54:00
+ Dollar rate : 36.950000
+ Euro rate : 41.610000
+ Zloty rate : 10.030000
+
