@@ -1,0 +1,44 @@
+19:34:17
+ Dollar rate : 40.070000
+ Euro rate : 42.900000
+ Zloty rate : 9.000000
+19:34:17
+ Dollar rate : 41.180000
+ Euro rate : 44.010000
+ Zloty rate : 9.570000
+19:34:17
+ Dollar rate : 39.400000
+ Euro rate : 44.070000
+ Zloty rate : 9.620000
+19:34:17
+ Dollar rate : 39.410000
+ Euro rate : 43.530000
+ Zloty rate : 10.700000
+20:48:08
+ Dollar rate : 39.540000
+ Euro rate : 41.950000
+ Zloty rate : 7.880000
+22:15:09
+ Dollar rate : 36.960000
+ Euro rate : 41.740000
+ Zloty rate : 9.920000
+22:17:15
+ Dollar rate : 36.960000
+ Euro rate : 41.740000
+ Zloty rate : 9.920000
+22:17:15
+ Dollar rate : 38.410000
+ Euro rate : 40.130000
+ Zloty rate : 8.500000
+22:17:15
+ Dollar rate : 37.500000
+ Euro rate : 40.660000
+ Zloty rate : 8.710000
+22:17:15
+ Dollar rate : 38.450000
+ Euro rate : 39.950000
+ Zloty rate : 9.830000
+16:46:53
+ Dollar rate : 36.110000
+ Euro rate : 41.740000
+ Zloty rate : 9.970000
