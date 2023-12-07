@@ -38,3 +38,7 @@
  Dollar rate : 38.450000
  Euro rate : 39.950000
  Zloty rate : 9.830000
+16:46:53
+ Dollar rate : 36.110000
+ Euro rate : 41.740000
+ Zloty rate : 9.970000

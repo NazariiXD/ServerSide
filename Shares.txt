@@ -142,3 +142,7 @@
  Shares Microsoft : 372.880000
  Shares Google : 137.450000
  Shares Apple : 200.940000
+16:46:53
+ Shares Microsoft : 372.170000
+ Shares Google : 134.100000
+ Shares Apple : 191.860000

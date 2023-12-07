@@ -45,15 +45,20 @@ int main() {
     mutex = CreateMutex(NULL, FALSE, NULL);
     if (mutex == NULL) {
         std::cerr << "Failed to create mutex\n";
+        return -1;
     }
     if (CreateThread(NULL, NULL, sendWeatherForecast, NULL, NULL, NULL) == NULL) {
         std::cerr << "Failed to launch forecast subscription service\n";
+        return -1;
+
     }
     if (CreateThread(NULL, NULL, sendExchangeRate, NULL, NULL, NULL) == NULL) {
         std::cerr << "Failed to launch exchange rate subscription service\n";
+        return -1;
     }
     if (CreateThread(NULL, NULL, sendSharePrice, NULL, NULL, NULL) == NULL) {
         std::cerr << "Failed to launch shares rate subscription service\n";
+        return -1;
     }
     std::cout << "Database connected\n";
 
@@ -78,16 +83,16 @@ int main() {
         clientSocket = accept(serverSocket, (struct sockaddr*)&clientAddress, &client_addr_size);
         if (clientSocket == INVALID_SOCKET) {
             std::cerr << "Accept failed. Error code : " << WSAGetLastError() << "\n";
-            /*closesocket(serverSocket);
-            WSACleanup();
-            return -1;*/
             continue;
         }
 
         std::cout << " " << __TIME__ << " Client connected\n";
 
         //Processing of client requests
-        CreateThread(NULL, 0, manageClientSubscription, &clientSocket, 0, NULL);
+        if (CreateThread(NULL, 0, manageClientSubscription, &clientSocket, 0, NULL) == NULL) {
+            std::cerr << "Failed to launch shares rate subscription service\n";
+            closesocket(clientSocket);
+        }
     }
 
     closesocket(serverSocket);

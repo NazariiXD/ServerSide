@@ -37,7 +37,6 @@ std::string randomWeatherForecast() {
         temperature += randomValue;
     }
     std::string str = " Temperature : " + std::to_string(temperature) + " °C";
-
     writeToFile("Weather.txt", str);
     return str;
 }
@@ -45,7 +44,6 @@ std::string randomSharePrice() {
     const int RANDOM_INTERVAL = 3;
     for (int i = 0; i < sizeof(sharesPriceVal)/sizeof(sharesPriceVal[0]); i++) {
         double randomValue = getRandomValue(RANDOM_INTERVAL);
-
         sharesPriceVal[i] = (sharesPriceVal[i] + randomValue > 0) ? (sharesPriceVal[i] + randomValue) : 0;
     }
     std::string str = " Shares Microsoft : " + std::to_string(sharesPriceVal[0]) +
@@ -60,7 +58,6 @@ std::string randomExchangeRate() {
 
     for (int i = 0; i < sizeof(exchangeRateVal)/sizeof(exchangeRateVal[0]); i++) {
         double randomValue = getRandomValue(RANDOM_INTERVAL);
-
         exchangeRateVal[i] = (exchangeRateVal[i] + randomValue > 0) ? (exchangeRateVal[i] + randomValue) : 0;
     }
     std::string str = " Dollar rate : " + std::to_string(exchangeRateVal[0]) +
@@ -73,10 +70,8 @@ std::string randomExchangeRate() {
 
 DWORD WINAPI manageClientSubscription(LPVOID param) {
     SOCKET clientSocket = *((SOCKET*)(param)); // Comment in memory of interpret_cast
-
     while (1) {
         short int subscriptionMask = 0;
-
         // Get data from client
         if (recv(clientSocket, (char *)&subscriptionMask, sizeof(short int), 0) == SOCKET_ERROR) {
             std::cerr << " Receive failed (Lost connection to client). Error code: " << WSAGetLastError() << "\n";
@@ -96,7 +91,6 @@ DWORD WINAPI manageClientSubscription(LPVOID param) {
         client.socket = clientSocket;
         client.subscription = subscriptionMask;
         int present = 0;
-
         WaitForSingleObject(mutex, INFINITE);
         if (subscriptionMask == 0) {
             for (int i = 0; i < clients.size(); i++) { // Delete socket from list if unsubscribed
@@ -121,9 +115,6 @@ DWORD WINAPI manageClientSubscription(LPVOID param) {
             }
         }
         ReleaseMutex(mutex);
-        //Sending a response to the client
-        const char* response = "Server received your subscription data.";
-        send(clientSocket, response, strlen(response), 0);
     }
     closesocket(clientSocket);
     return 0;
