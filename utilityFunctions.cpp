@@ -126,7 +126,7 @@ DWORD WINAPI sendWeatherForecast(LPVOID param) {
         weatherForecast = randomWeatherForecast();
         mailingData packet;
         packet.type = 0b100;
-        packet.message = weatherForecast;
+        strcpy(packet.message, weatherForecast.c_str());
         for (int i = 0; i < clients.size(); i++) {
             if ((clients[i].subscription & 0b100) == 0b100) {
                 if (send(clients[i].socket, (char *)&packet, sizeof(mailingData), 0) == SOCKET_ERROR) {
@@ -146,7 +146,7 @@ DWORD WINAPI sendExchangeRate(LPVOID param) {
         exchangeRate = randomExchangeRate();
         mailingData packet;
         packet.type = 0b010;
-        packet.message = exchangeRate;
+        strcpy(packet.message, exchangeRate.c_str());
         for (int i = 0; i < clients.size(); i++) {
             if ((clients[i].subscription & 0b010) == 0b010) {
                 if (send(clients[i].socket, (char *)&packet, sizeof(mailingData), 0) == SOCKET_ERROR) {
@@ -167,7 +167,7 @@ DWORD WINAPI sendSharePrice(LPVOID param) {
         sharesRate = randomSharePrice();
         mailingData packet;
         packet.type = 0b001;
-        packet.message = sharesRate;
+        strcpy(packet.message, sharesRate.c_str());
         for (int i = 0; i < clients.size(); i++) {
             if ((clients[i].subscription & 0b001) == 0b001) {
                 if (send(clients[i].socket, (char*)&packet, sizeof(mailingData), 0) == SOCKET_ERROR) {
