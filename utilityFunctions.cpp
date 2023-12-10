@@ -71,7 +71,7 @@ std::string randomExchangeRate() {
 DWORD WINAPI manageClientSubscription(LPVOID param) {
     SOCKET clientSocket = *((SOCKET*)(param)); // Comment in memory of interpret_cast
     while (1) {
-        short int subscriptionMask = 0;
+        short int subscriptionMask = 0b000;
         // Get data from client
         if (recv(clientSocket, (char *)&subscriptionMask, sizeof(short int), 0) == SOCKET_ERROR) {
             std::cerr << " Receive failed (Lost connection to client). Error code: " << WSAGetLastError() << "\n";
@@ -103,15 +103,17 @@ DWORD WINAPI manageClientSubscription(LPVOID param) {
         else {
             for (int i = 0; i < clients.size(); i++) {   // Add/update subscription
                 if (clientSocket == clients[i].socket) {
-                    clients[i].subscription = client.subscription;
+                    if (clients[i].subscription != client.subscription) {
+                        clients[i].subscription = client.subscription;
+                        std::cout << " " << __TIME__ << " Updated client" + std::to_string(i) + " subscription to " << std::bitset<3>(client.subscription) << "\n";
+                    }
                     present = 1;
-                    std::cout << " " << __TIME__ << " Updated client" + std::to_string(i) + " subscription to " << std::bitset<3>(subscriptionMask) << "\n";
                     break;
                 }
             }
             if (present == 0) {
                 clients.push_back(client);
-                std::cout << " " << __TIME__ << " Added client with" << std::bitset<3>(subscriptionMask) << " subscription mask\n";
+                std::cout << " " << __TIME__ << " Added client with " << std::bitset<3>(subscriptionMask) << " subscription mask\n";
             }
         }
         ReleaseMutex(mutex);
@@ -126,7 +128,7 @@ DWORD WINAPI sendWeatherForecast(LPVOID param) {
         weatherForecast = randomWeatherForecast();
         mailingData packet;
         packet.type = 0b100;
-        packet.message = weatherForecast;
+        strcpy_s(packet.message, weatherForecast.c_str());
         for (int i = 0; i < clients.size(); i++) {
             if ((clients[i].subscription & 0b100) == 0b100) {
                 if (send(clients[i].socket, (char *)&packet, sizeof(mailingData), 0) == SOCKET_ERROR) {
@@ -146,7 +148,7 @@ DWORD WINAPI sendExchangeRate(LPVOID param) {
         exchangeRate = randomExchangeRate();
         mailingData packet;
         packet.type = 0b010;
-        packet.message = exchangeRate;
+        strcpy_s(packet.message, exchangeRate.c_str());
         for (int i = 0; i < clients.size(); i++) {
             if ((clients[i].subscription & 0b010) == 0b010) {
                 if (send(clients[i].socket, (char *)&packet, sizeof(mailingData), 0) == SOCKET_ERROR) {
@@ -167,7 +169,7 @@ DWORD WINAPI sendSharePrice(LPVOID param) {
         sharesRate = randomSharePrice();
         mailingData packet;
         packet.type = 0b001;
-        packet.message = sharesRate;
+        strcpy_s(packet.message, sharesRate.c_str());
         for (int i = 0; i < clients.size(); i++) {
             if ((clients[i].subscription & 0b001) == 0b001) {
                 if (send(clients[i].socket, (char*)&packet, sizeof(mailingData), 0) == SOCKET_ERROR) {
