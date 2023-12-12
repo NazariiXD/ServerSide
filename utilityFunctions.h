@@ -24,7 +24,7 @@ struct clientData {
 };
 struct mailingData {
 	short int type;
-	std::string message;
+	char message[200];
 };
 DWORD WINAPI manageClientSubscription(LPVOID);
 DWORD WINAPI sendWeatherForecast(LPVOID);
