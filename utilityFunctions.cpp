@@ -11,21 +11,32 @@ double temperature = TEMPERATURE;
 
 std::vector<clientData> clients;
 
+std::string getCurrentTime() {
+    auto now = std::chrono::system_clock::now();
+    auto time_t_now = std::chrono::system_clock::to_time_t(now);
+    std::tm tm_now;
+    localtime_s(&tm_now, &time_t_now);
+
+    std::ostringstream ss;
+    ss << std::put_time(&tm_now, "%H:%M:%S");
+    return ss.str();
+}
 void writeToFile(const std::string& fileName, const std::string& data) {
     std::ofstream file(fileName, std::ios_base::app);
     if (file.is_open()) {
-        file << __TIME__;
+        file << getCurrentTime();
         file << "\n" + data + "\n";
         file.close();
     }
 }
-double getRandomValue(int randomInterval) {
+double getRandomValue(double randomInterval) {
+    int interval = static_cast<int>(randomInterval * 100.0);
     double sign = (rand() % 2 == 0) ? 1.0 : -1.0;
-    return sign * (static_cast<double>(rand() % randomInterval) + static_cast<double>(rand() % 100) / 100);
+    return sign * (static_cast<double>(rand() % (interval)) / 100);
 }
 
 std::string randomWeatherForecast() {
-    const int RANDOM_INTERVAL = 3;
+    const double RANDOM_INTERVAL = 2.0;
     double randomValue = getRandomValue(RANDOM_INTERVAL);
     if (temperature + randomValue > 40.0) {
         temperature -= 1.0;
@@ -36,34 +47,40 @@ std::string randomWeatherForecast() {
     else {
         temperature += randomValue;
     }
-    std::string str = " Temperature : " + std::to_string(temperature) + " °C";
+    std::ostringstream ss;
+    ss << " Temperature : " << std::fixed << std::setprecision(2) << temperature << " °C";
+
+    std::string str = ss.str();
     writeToFile("Weather.txt", str);
     return str;
 }
 std::string randomSharePrice() {
-    const int RANDOM_INTERVAL = 3;
+    const double RANDOM_INTERVALS[] = { 3.0, 3.0, 3.0 };
     for (int i = 0; i < sizeof(sharesPriceVal)/sizeof(sharesPriceVal[0]); i++) {
-        double randomValue = getRandomValue(RANDOM_INTERVAL);
-        sharesPriceVal[i] = (sharesPriceVal[i] + randomValue > 0) ? (sharesPriceVal[i] + randomValue) : 0;
+        double randomValue = getRandomValue(RANDOM_INTERVALS[i]);
+        sharesPriceVal[i] = max(sharesPriceVal[i] + randomValue, 0);
     }
-    std::string str = " Shares Microsoft : " + std::to_string(sharesPriceVal[0]) +
-        "\n Shares Google : " + std::to_string(sharesPriceVal[1]) +
-        "\n Shares Apple : " + std::to_string(sharesPriceVal[2]);
+    std::ostringstream ss;
+    ss << " Shares Microsoft : " << std::fixed << std::setprecision(2) << sharesPriceVal[0] <<
+        "\n Shares Google : " << std::fixed << std::setprecision(2) << sharesPriceVal[1] <<
+        "\n Shares Apple : " << std::fixed << std::setprecision(2) << sharesPriceVal[2];
 
+    std::string str = ss.str();
     writeToFile("Shares.txt", str);
     return str;
 }
 std::string randomExchangeRate() {
-    const int RANDOM_INTERVAL = 2;
-
+    const double RANDOM_INTERVALS[] = {2.0, 1.5, 0.5};
     for (int i = 0; i < sizeof(exchangeRateVal)/sizeof(exchangeRateVal[0]); i++) {
-        double randomValue = getRandomValue(RANDOM_INTERVAL);
-        exchangeRateVal[i] = (exchangeRateVal[i] + randomValue > 0) ? (exchangeRateVal[i] + randomValue) : 0;
+        double randomValue = getRandomValue(RANDOM_INTERVALS[i]);
+        exchangeRateVal[i] = max(exchangeRateVal[i] + randomValue, 0);
     }
-    std::string str = " Dollar rate : " + std::to_string(exchangeRateVal[0]) +
-        "\n Euro rate : " + std::to_string(exchangeRateVal[1]) +
-        "\n Zloty rate : " + std::to_string(exchangeRateVal[2]);
+    std::ostringstream ss;
+    ss << " Dollar rate : " << std::fixed << std::setprecision(2) << exchangeRateVal[0] <<
+        "\n Euro rate : " << std::fixed << std::setprecision(2) << exchangeRateVal[1] <<
+        "\n Zloty rate : " << std::fixed << std::setprecision(2) << exchangeRateVal[2];
 
+    std::string str = ss.str();
     writeToFile("Rate.txt", str);
     return str;
 }
@@ -79,14 +96,14 @@ DWORD WINAPI manageClientSubscription(LPVOID param) {
             for (int i = 0; i < clients.size(); i++) { // Delete socket from list if disconnected
                 if (clientSocket == clients[i].socket) {
                     clients.erase(clients.begin() + i);
-                    std::cout << " " << __TIME__ << " Deleted disconnected client" + std::to_string(i) + " from subscription list\n";
+                    std::cout << " " << getCurrentTime() << " Deleted disconnected client" + std::to_string(i) + " from subscription list\n";
                 }
             }
             ReleaseMutex(mutex);
-            closesocket(clientSocket);
+            closesocket(clientSocket); 
             return -1;
         }
-        std::cout << " " << __TIME__ << " Received message from client : " << std::bitset<3>(subscriptionMask) << "\n";
+        std::cout << " " << getCurrentTime() << " Received message from client : " << std::bitset<3>(subscriptionMask) << "\n";
         clientData client{};
         client.socket = clientSocket;
         client.subscription = subscriptionMask;
@@ -96,7 +113,7 @@ DWORD WINAPI manageClientSubscription(LPVOID param) {
             for (int i = 0; i < clients.size(); i++) { // Delete socket from list if unsubscribed
                 if (clientSocket == clients[i].socket) {
                     clients.erase(clients.begin() + i);
-                    std::cout << " " << __TIME__ << " Deleted unsubscribed client" + std::to_string(i) + " from list\n";
+                    std::cout << " " << getCurrentTime() << " Deleted unsubscribed client" + std::to_string(i) + " from list\n";
                 }
             }
         }
@@ -105,7 +122,7 @@ DWORD WINAPI manageClientSubscription(LPVOID param) {
                 if (clientSocket == clients[i].socket) {
                     if (clients[i].subscription != client.subscription) {
                         clients[i].subscription = client.subscription;
-                        std::cout << " " << __TIME__ << " Updated client" + std::to_string(i) + " subscription to " << std::bitset<3>(client.subscription) << "\n";
+                        std::cout << " " << getCurrentTime() << " Updated client" + std::to_string(i) + " subscription to " << std::bitset<3>(client.subscription) << "\n";
                     }
                     present = 1;
                     break;
@@ -113,7 +130,7 @@ DWORD WINAPI manageClientSubscription(LPVOID param) {
             }
             if (present == 0) {
                 clients.push_back(client);
-                std::cout << " " << __TIME__ << " Added client with " << std::bitset<3>(subscriptionMask) << " subscription mask\n";
+                std::cout << " " << getCurrentTime() << " Added client with " << std::bitset<3>(subscriptionMask) << " subscription mask\n";
             }
         }
         ReleaseMutex(mutex);
@@ -126,7 +143,7 @@ DWORD WINAPI sendWeatherForecast(LPVOID param) {
     while (1) {
         WaitForSingleObject(mutex, INFINITE);
         weatherForecast = randomWeatherForecast();
-        mailingData packet;
+        mailingData packet{};
         packet.type = 0b100;
         strcpy_s(packet.message, weatherForecast.c_str());
         for (int i = 0; i < clients.size(); i++) {
@@ -146,7 +163,7 @@ DWORD WINAPI sendExchangeRate(LPVOID param) {
     while (1) {
         WaitForSingleObject(mutex, INFINITE);
         exchangeRate = randomExchangeRate();
-        mailingData packet;
+        mailingData packet{};
         packet.type = 0b010;
         strcpy_s(packet.message, exchangeRate.c_str());
         for (int i = 0; i < clients.size(); i++) {
@@ -158,8 +175,8 @@ DWORD WINAPI sendExchangeRate(LPVOID param) {
             }
         }
         ReleaseMutex(mutex);
-        Sleep(10000);
-        /*Sleep(60 * 1000);*/
+        Sleep(30000);
+        /*Sleep(24 * 60 * 60 * 1000);*/
     }
     return 0;
 }
@@ -167,7 +184,7 @@ DWORD WINAPI sendSharePrice(LPVOID param) {
     while (1) {
         WaitForSingleObject(mutex, INFINITE);
         sharesRate = randomSharePrice();
-        mailingData packet;
+        mailingData packet{};
         packet.type = 0b001;
         strcpy_s(packet.message, sharesRate.c_str());
         for (int i = 0; i < clients.size(); i++) {
@@ -179,8 +196,8 @@ DWORD WINAPI sendSharePrice(LPVOID param) {
             }
         }
         ReleaseMutex(mutex);
-        Sleep(2500);
-        /*Sleep(24 * 60 * 60 * 1000);*/
+        Sleep(5000);
+        /*Sleep(60 * 1000);*/
     }
     return 0;
 }

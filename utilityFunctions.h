@@ -6,7 +6,8 @@
 #include <sstream>
 #include <bitset>
 #include <vector>
-#include <time.h>
+#include <chrono>
+#include <iomanip>
 
 #define TEMPERATURE 0
 
@@ -31,6 +32,7 @@ DWORD WINAPI sendWeatherForecast(LPVOID);
 DWORD WINAPI sendExchangeRate(LPVOID);
 DWORD WINAPI sendSharePrice(LPVOID);
 
+std::string getCurrentTime();
 void writeToFile(const std::string& fileName, const std::string& data);
 double getRandomValue(int randomInterval);
 
