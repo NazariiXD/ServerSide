@@ -34,7 +34,7 @@ DWORD WINAPI sendSharePrice(LPVOID);
 
 std::string getCurrentTime();
 void writeToFile(const std::string& fileName, const std::string& data);
-double getRandomValue(int randomInterval);
+double getRandomValue(double randomInterval);
 
 std::string randomWeatherForecast();
 std::string randomExchangeRate();

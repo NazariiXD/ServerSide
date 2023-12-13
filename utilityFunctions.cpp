@@ -70,7 +70,7 @@ std::string randomSharePrice() {
     return str;
 }
 std::string randomExchangeRate() {
-    const double RANDOM_INTERVALS[] = {2.0, 1.5, 0.5};
+    const double RANDOM_INTERVALS[] = {1.5, 1.0, 0.5};
     for (int i = 0; i < sizeof(exchangeRateVal)/sizeof(exchangeRateVal[0]); i++) {
         double randomValue = getRandomValue(RANDOM_INTERVALS[i]);
         exchangeRateVal[i] = max(exchangeRateVal[i] + randomValue, 0);

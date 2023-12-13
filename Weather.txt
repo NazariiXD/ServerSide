@@ -1,108 +1,74 @@
-13:14:39
- Temperature : -1.34 °C
-13:14:59
- Temperature : -0.10 °C
-13:15:16
- Temperature : -1.34 °C
-13:15:36
- Temperature : -0.10 °C
-13:15:56
- Temperature : 0.52 °C
-13:16:16
- Temperature : 1.97 °C
-13:16:36
- Temperature : 0.36 °C
-13:16:56
- Temperature : -1.06 °C
-13:17:16
- Temperature : -1.97 °C
-13:17:36
- Temperature : -1.44 °C
-13:17:56
- Temperature : -1.23 °C
-13:18:16
- Temperature : -0.28 °C
-13:18:36
- Temperature : -0.99 °C
-13:18:56
- Temperature : 0.13 °C
-13:19:16
- Temperature : -1.22 °C
-13:19:36
- Temperature : -0.11 °C
-13:19:56
- Temperature : 1.62 °C
-13:20:16
- Temperature : 2.73 °C
-13:20:36
- Temperature : 2.26 °C
-13:20:56
- Temperature : 2.83 °C
-13:29:22
+16:09:58
  Temperature : -0.67 °C
-13:29:42
+16:10:18
  Temperature : 0.33 °C
-13:30:02
+16:10:38
  Temperature : -0.91 °C
-13:30:22
+16:10:58
  Temperature : 0.67 °C
-13:30:42
+16:11:18
  Temperature : 1.31 °C
-13:31:02
+16:11:38
  Temperature : -0.14 °C
-13:31:23
- Temperature : -0.67 °C
-13:31:43
- Temperature : 0.33 °C
-13:32:03
- Temperature : -0.91 °C
-13:32:23
- Temperature : 0.67 °C
-13:32:43
- Temperature : 1.31 °C
-13:33:03
- Temperature : -0.14 °C
-13:33:23
+16:11:58
  Temperature : -0.41 °C
-13:33:43
+16:12:18
  Temperature : -1.32 °C
-13:34:03
+16:12:38
  Temperature : -2.74 °C
-13:34:23
+16:12:58
  Temperature : -3.10 °C
-13:34:43
+16:13:18
  Temperature : -3.14 °C
-13:35:07
+16:13:38
+ Temperature : -1.61 °C
+16:13:58
+ Temperature : 0.21 °C
+16:14:18
+ Temperature : -0.95 °C
+16:16:59
  Temperature : -0.67 °C
-13:35:17
- Temperature : -0.67 °C
-13:35:37
+16:17:19
  Temperature : 0.33 °C
-13:35:57
+16:17:39
  Temperature : -0.91 °C
-13:36:17
+16:17:59
  Temperature : 0.67 °C
-13:36:45
- Temperature : -0.67 °C
-13:37:05
- Temperature : 0.33 °C
-13:37:25
- Temperature : -0.91 °C
-13:37:38
- Temperature : -0.67 °C
-13:37:58
- Temperature : 0.33 °C
-13:38:18
- Temperature : -0.91 °C
-13:38:33
- Temperature : -0.67 °C
-13:38:39
- Temperature : -0.67 °C
-13:38:59
- Temperature : 0.33 °C
-13:39:19
- Temperature : -0.91 °C
-13:39:39
- Temperature : 0.67 °C
-13:39:59
+16:18:19
  Temperature : 1.31 °C
+16:18:39
+ Temperature : -0.14 °C
+16:18:59
+ Temperature : -0.41 °C
+16:19:19
+ Temperature : -1.32 °C
+17:31:27
+ Temperature : -0.67 °C
+17:31:47
+ Temperature : 0.33 °C
+17:32:07
+ Temperature : -0.91 °C
+17:32:27
+ Temperature : 0.67 °C
+17:32:47
+ Temperature : 1.31 °C
+17:33:07
+ Temperature : -0.14 °C
+17:33:27
+ Temperature : -0.41 °C
+17:33:47
+ Temperature : -1.32 °C
+17:34:07
+ Temperature : -2.74 °C
+17:34:27
+ Temperature : -3.10 °C
+17:34:47
+ Temperature : -3.14 °C
+17:35:07
+ Temperature : -1.61 °C
+17:35:27
+ Temperature : 0.21 °C
+17:35:47
+ Temperature : -0.95 °C
+17:36:07
+ Temperature : 0.00 °C
